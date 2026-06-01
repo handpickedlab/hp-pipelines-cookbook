@@ -1,0 +1,145 @@
+{
+  "name": "Orchestrator Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Start",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Briefing",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -528,
+        -208
+      ],
+      "id": "dc181893-1fef-426d-8f5f-331739d77234",
+      "name": "On form submission",
+      "webhookId": "15c9910d-ebf8-4a74-8094-cca0aebd45d4"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are the orchestrator agent.\n\nUse the N8N MCP to list workflows and call them for the task you need to complete.\n\nFirst list all workflows before deciding which ones you need.\n\nWriter → Editor → Reviewer (linear, 1 pass)\n\nHere is the briefing:\n\n{{ $json.Briefing }}",
+        "options": {
+          "maxIterations": 100
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -256,
+        -208
+      ],
+      "id": "89d5c7eb-6a94-4499-8690-e8a7d7b46f6a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://localhost:5678/mcp-server/http",
+        "authentication": "bearerAuth",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        32
+      ],
+      "id": "831300ba-114c-4e0a-9eba-f627860925d3",
+      "name": "MCP Client1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "aPmaFWciP9akaJoh",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -352,
+        32
+      ],
+      "id": "8f9f29a1-9c3c-40bf-874d-3eae0f1cecf6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "yHoyiBrcyfOgulYE",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "86ef03cd-32d4-460c-8c02-5f82ad2da721",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f978a841a740f99c33f7b6fbac6c492729da430708b5296e90ec85a3627272a7"
+  },
+  "id": "FNjLl6FY5MkIe2Bm",
+  "tags": []
+}

@@ -1,0 +1,99 @@
+{
+  "name": "Writer Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "9f7a6464-16f5-4475-8dd6-8284bccbb668",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        112,
+        64
+      ],
+      "id": "6524c729-260b-49f4-9a90-0c91057c82a6",
+      "name": "Webhook",
+      "webhookId": "9f7a6464-16f5-4475-8dd6-8284bccbb668"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a writer agent. You write a draft based on the briefing and output preferences.\n\n{{ $json.body.toJsonString() }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        288,
+        64
+      ],
+      "id": "7cd073be-c6ed-40ff-b246-1b2f80f965a5",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        272,
+        272
+      ],
+      "id": "00586e40-f2a5-4500-842f-078f1f5e60ac",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "yHoyiBrcyfOgulYE",
+          "name": "OpenAI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "f43abfc3-56b3-4063-ba8f-58c6692561a3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f978a841a740f99c33f7b6fbac6c492729da430708b5296e90ec85a3627272a7"
+  },
+  "id": "RVwnLpB7FJuSuHFO",
+  "tags": []
+}
