@@ -20,7 +20,7 @@ Handpicked bouwt een interne tool waarmee agency-teams agent-pipelines kunnen he
 |---|---|---|
 | [`01_n8n/`](01_n8n/) | n8n | Docker Compose + startscript aanwezig |
 | [`02_mastra/`](02_mastra/) | Mastra | — |
-| [`03_langgraph/`](03_langgraph/) | LangGraph | — |
+| [`03_langgraph/`](03_langgraph/) | LangGraph | L1/L2/L3 runnable |
 | [`04_dify/`](04_dify/) | Dify | — |
 | [`05_pydanticai/`](05_pydanticai/) | Pydantic AI | — |
 | [`06_agentfield/`](06_agentfield/) | AgentField | — |
@@ -116,11 +116,20 @@ Per cel: verdict plus findings (Setup-tijd, Highs 👌, Lows 👎, Nog te onderz
 
 | | n8n | Dify | Pydantic AI | Mastra | LangGraph | AgentField |
 |---|---|---|---|---|---|---|
-| **L1** Writer | | | | | | |
-| **L2** Lineaire chain | | | | | | |
-| **L3** Orchestrator + HITL | | | | | | |
+| **L1** Writer | | | | | ⚠️ Writer werkt; lengte mist (461/600 woorden) | |
+| **L2** Lineaire chain | | | | | ✅ Chain + Editor fix lengte; JSON UI-payload | |
+| **L3** Orchestrator + HITL | | | | | ✅ Revisie-loop + HITL; geen Studio/retry getest | |
+
+### LangGraph — findings
+
+**L1** ⚠️ — Setup ~15 min (venv + Gemini-key). 👌 Eén node, Pydantic structured output, trace in state. 👎 Writer alleen houdt lengte niet; geen UI. Nog: Studio, prompt-tuning. Effort: laag.
+
+**L2** ✅ — +30 min boven L1. 👌 `writer→editor→reviewer` expliciet; Editor 483→595 woorden; JSON klaar voor frontend. 👎 ~45s/run, drie sequentiële LLM-calls. Effort: medium.
+
+**L3** ✅ — +1–2u boven L2. 👌 Reviewer-fail → revisie → pass in één run; guard op 3 iteraties; `interrupt()` + checkpointing; volledige historie in JSON; lokale lengte/must_avoid-gate voorkomt vals positieve reviews. 👎 HITL via terminal (geen Studio); geen retry bij API-fouten; LangGraph waarschuwt over toekomstige msgpack-registratie voor custom Pydantic types. Nog: 3× fail, rate-limit, handmatige HITL-resume. Effort: medium-hoog.
 
 Aan het eind zie je per framework waar het breekt en welke je meeneemt.
+
 
 ---
 
