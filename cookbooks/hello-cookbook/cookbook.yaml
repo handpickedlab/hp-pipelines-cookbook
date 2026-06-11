@@ -8,4 +8,5 @@ runtime: node
 stack: [static]
 owner: niek
 deploy: true
+url: https://cookbook-hello-cookbook.vercel.app
 tags: [voorbeeld]
