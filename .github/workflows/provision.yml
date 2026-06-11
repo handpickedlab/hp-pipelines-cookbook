@@ -27,4 +27,5 @@ jobs:
       - name: Provision missing Vercel projects
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
         run: node .github/scripts/provision.mjs

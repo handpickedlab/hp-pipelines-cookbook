@@ -75,10 +75,11 @@ Pas het aan: het "Lokaal draaien"-blok moet kloppen voor jouw code. Dit bestand 
 
 ## Stap 5 — Bouw je experiment
 
-Zet je code in `cookbooks/mijn-experiment/src/`. Alles mag, twee regels:
+Zet je code in `cookbooks/mijn-experiment/src/`. Alles mag, drie regels:
 
 1. **Geen secrets in de repo.** API-keys gaan via env vars (Vercel project settings) of moeten door de gebruiker zelf worden aangemaakt (documenteer de namen in `HOSTING.md`).
 2. **Blijf in je eigen map.** Cookbooks importeren niks van elkaar en niks uit `index/`.
+3. **Ga je deployen? Kopieer `templates/middleware.ts` naar je `src/`.** Dat zet je cookbook achter het gedeelde teamwachtwoord (basic auth); zonder dit bestand staat je deploy open op internet. Het wachtwoord zelf wordt bij provisioning automatisch als env var gezet — vraag het aan Niek.
 
 ## Stap 6 — Valideer
 

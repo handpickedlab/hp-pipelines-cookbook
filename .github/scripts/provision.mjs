@@ -84,6 +84,18 @@ for (const m of candidates) {
     continue;
   }
 
+  if (process.env.SITE_PASSWORD) {
+    const env = await api("POST", `/v10/projects/${projectName}/env`, {
+      key: "SITE_PASSWORD",
+      value: process.env.SITE_PASSWORD,
+      type: "encrypted",
+      target: ["production", "preview"],
+    });
+    if (env.status >= 300) {
+      console.error(`⚠  ${m.slug}: SITE_PASSWORD zetten mislukt (${env.status}) — site is open tot je hem handmatig zet.`);
+    }
+  }
+
   const repoId = created.data.link?.repoId;
   if (!repoId) {
     console.error(`✖  ${m.slug}: project aangemaakt maar geen git-koppeling — eerste deploy handmatig triggeren.`);

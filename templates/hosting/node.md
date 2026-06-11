@@ -12,6 +12,10 @@ npm run dev
 
 *(Pas aan naar jouw stack; dit blok moet kloppen voor wie het cookbook checkt.)*
 
+## Wachtwoordbeveiliging
+
+Kopieer `templates/middleware.ts` naar je `src/` — daarmee zit je cookbook achter dezelfde basic-auth als de catalogus (env var `SITE_PASSWORD`, wordt automatisch gezet bij provisioning). Zonder dit bestand staat je deploy **open op internet**.
+
 ## Live zetten (automatisch)
 
 Zet `deploy: true` in `cookbook.yaml` en merge naar `main`. De provisioning-workflow maakt dan automatisch het Vercel-project aan (`cookbook-<slug>`, root directory `cookbooks/<slug>/src`, ignored-build-step ingesteld) en deployt meteen. Daarna:

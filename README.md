@@ -54,6 +54,10 @@ node index/scripts/validate.mjs
 
 CI draait dezelfde check op elke PR.
 
+## Toegang
+
+De catalogus en de gedeployde cookbooks zitten achter basic-auth met een gedeeld teamwachtwoord (vraag het aan Niek; elke username werkt). Technisch: `middleware.ts` per project checkt de env var `SITE_PASSWORD`, die de provisioning-workflow automatisch zet. Cookbooks kopiëren `templates/middleware.ts` naar hun `src/` — zonder dat bestand staat een deploy open op internet. Lokaal (zonder de env var) is alles gewoon open.
+
 ## Deploy-provisioning (automatisch)
 
 Zet `deploy: true` in je manifest en merge naar `main` — de provisioning-workflow (`.github/workflows/provision.yml`) maakt dan automatisch een Vercel-project aan (`cookbook-<slug>`, root directory op jouw `src/`) en triggert de eerste deploy. Je app komt live op `https://cookbook-<slug>.vercel.app`; zet die URL daarna als `url:` in je manifest. Geldt voor runtime `node` en `python-serverless`; extern gehoste runtimes worden overgeslagen. Vereist het repo-secret `VERCEL_TOKEN`.
