@@ -2,6 +2,8 @@
 
 Experiment-sandbox voor het Handpicked-team: één monorepo met onafhankelijk deploybare cookbooks, plus een centrale index-site (catalogus) op Vercel.
 
+**Nieuw hier? Volg [TUTORIAL.md](TUTORIAL.md)** — van clone tot live cookbook in ~15 minuten. Live catalogus: [hp-cookbooks-index.vercel.app](https://hp-cookbooks-index.vercel.app).
+
 Een **cookbook** is een zelfstandig experiment: een web-app, een workflow (bv. n8n-export), of een notebook. Elk cookbook leeft in zijn eigen map onder `cookbooks/`, beschrijft zichzelf in een `cookbook.yaml`, en legt in een `HOSTING.md` uit hoe en waar het draait.
 
 ## Structuur
