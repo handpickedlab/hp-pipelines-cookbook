@@ -54,9 +54,9 @@ node index/scripts/validate.mjs
 
 CI draait dezelfde check op elke PR.
 
-## Deploy-provisioning
+## Deploy-provisioning (automatisch)
 
-Nieuwe Vercel-projecten voor cookbooks met `deploy: true` worden voorlopig handmatig aangemaakt (zie het recept in `templates/hosting/`). Automatische provisioning via de Vercel API bij merge is een TODO — zie `.github/workflows/provision.yml`.
+Zet `deploy: true` in je manifest en merge naar `main` — de provisioning-workflow (`.github/workflows/provision.yml`) maakt dan automatisch een Vercel-project aan (`cookbook-<slug>`, root directory op jouw `src/`) en triggert de eerste deploy. Je app komt live op `https://cookbook-<slug>.vercel.app`; zet die URL daarna als `url:` in je manifest. Geldt voor runtime `node` en `python-serverless`; extern gehoste runtimes worden overgeslagen. Vereist het repo-secret `VERCEL_TOKEN`.
 
 ---
 

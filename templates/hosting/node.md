@@ -12,16 +12,15 @@ npm run dev
 
 *(Pas aan naar jouw stack; dit blok moet kloppen voor wie het cookbook checkt.)*
 
-## Vercel-project aanmaken (eenmalig, na merge)
+## Live zetten (automatisch)
 
-1. Vercel-dashboard → Handpicked-team → **Add New… → Project** → importeer deze repo (staat er al — kies "Add another project from the same repo").
-2. **Root Directory**: `cookbooks/<slug>/src`
-3. Framework preset wordt meestal automatisch herkend; controleer build command en output.
-4. **Ignored Build Step** (Settings → Git), zodat alleen wijzigingen in dit cookbook een build triggeren:
-   ```bash
-   git diff HEAD^ HEAD --quiet -- ../
-   ```
-5. Na de eerste deploy: zet de productie-URL in `cookbook.yaml` onder `url:` en zet `deploy: true`.
+Zet `deploy: true` in `cookbook.yaml` en merge naar `main`. De provisioning-workflow maakt dan automatisch het Vercel-project aan (`cookbook-<slug>`, root directory `cookbooks/<slug>/src`, ignored-build-step ingesteld) en deployt meteen. Daarna:
+
+1. Check `https://cookbook-<slug>.vercel.app`.
+2. Env vars nodig? Vercel-dashboard → project → Settings → Environment Variables (namen volgens `.env.example` in de repo-root), daarna redeployen.
+3. Zet de URL als `url:` in `cookbook.yaml` (vervolg-PR) voor de "Open"-knop in de catalogus.
+
+Handmatig aanmaken kan ook nog (dashboard → Add New → Project → zelfde repo, root directory op jouw `src/`), bv. als de workflow faalt.
 
 ## Checklist
 

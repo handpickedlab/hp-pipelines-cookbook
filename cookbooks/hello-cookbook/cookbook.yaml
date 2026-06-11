@@ -7,5 +7,5 @@ type: app
 runtime: node
 stack: [static]
 owner: niek
-deploy: false
+deploy: true
 tags: [voorbeeld]

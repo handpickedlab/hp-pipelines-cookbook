@@ -72,10 +72,10 @@ Wie je kunt aanspreken over dit cookbook.
 
 ### `deploy` — verplicht — `true` | `false`
 
-Of dit cookbook een eigen Vercel-project heeft (of hoort te krijgen).
+Of dit cookbook een eigen Vercel-project moet krijgen. **Dit veld is sturend**: bij merge naar `main` maakt de provisioning-workflow voor elk cookbook met `deploy: true` (en runtime `node` of `python-serverless`) automatisch een Vercel-project aan — naam `cookbook-<slug>`, root directory `cookbooks/<slug>/src` — en triggert de eerste deploy. Je app komt live op `https://cookbook-<slug>.vercel.app`.
 
-- *Gebruikt voor*: administratie + de geplande provisioning-workflow gaat hierop selecteren.
-- *Fout ingevuld*: geen boolean → CI blokkeert. `true` zonder dat het project bestaat → niets breekt vandaag, maar zodra provisioning live is wordt dit veld sturend, dus houd het waar.
+- *Gebruikt voor*: de provisioning-workflow (`.github/workflows/provision.yml`) selecteert hierop.
+- *Fout ingevuld*: geen boolean → CI blokkeert. Per ongeluk `true` → er wordt écht een project aangemaakt en gedeployd; opruimen moet handmatig in het Vercel-dashboard. `true` bij `runtime: python-server`/`notebook` wordt overgeslagen (extern gehost); bij `runtime: none` blokkeert CI.
 
 ### `url` — optioneel (verplicht bij `runtime: python-server`)
 

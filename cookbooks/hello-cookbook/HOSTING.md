@@ -10,4 +10,4 @@ open src/index.html
 
 ## Deploy
 
-Dit voorbeeld wordt niet gedeployd (`deploy: false`). Zou het wel moeten: volg `templates/hosting/node.md` — eigen Vercel-project met root directory `cookbooks/hello-cookbook/src`.
+`deploy: true` — automatisch geprovisioned door de workflow; dit cookbook dient meteen als smoke-test van die automatisering. Live op https://cookbook-hello-cookbook.vercel.app.

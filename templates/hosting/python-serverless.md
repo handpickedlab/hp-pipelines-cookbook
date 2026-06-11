@@ -61,19 +61,15 @@ uvicorn api.index:app --reload      # http://localhost:8000
 
 (`uvicorn` is alleen lokaal nodig; op Vercel draait de ASGI-app in hun eigen runtime.)
 
-## Vercel-project aanmaken (eenmalig, na merge)
+## Live zetten (automatisch)
 
-Dit doe je één keer; daarna deployt elke push naar `main` automatisch.
+Zet `deploy: true` in `cookbook.yaml` en merge naar `main`. De provisioning-workflow maakt dan automatisch het Vercel-project aan (`cookbook-<slug>`, root directory `cookbooks/<slug>/src`, ignored-build-step ingesteld) en deployt meteen. Daarna:
 
-1. Vercel-dashboard → Handpicked-team → **Add New… → Project** → kies deze repo ("Add another project from the same repo").
-2. **Root Directory**: `cookbooks/<slug>/src`
-3. Framework preset: **Other** (er is geen frontend-framework; de `api/`-map wordt automatisch herkend).
-4. Env vars nodig (API-keys e.d.)? Settings → Environment Variables. Namen volgens `.env.example` in de repo-root.
-5. **Ignored Build Step** (Settings → Git), zodat alleen wijzigingen aan dit cookbook een build triggeren:
-   ```bash
-   git diff HEAD^ HEAD --quiet -- ../
-   ```
-6. Deploy, test een endpoint, en zet daarna in `cookbook.yaml`: `deploy: true` en `url: https://...`.
+1. Test een endpoint op `https://cookbook-<slug>.vercel.app`.
+2. Env vars nodig (API-keys e.d.)? Vercel-dashboard → project → Settings → Environment Variables (namen volgens `.env.example` in de repo-root), daarna redeployen.
+3. Zet de URL als `url:` in `cookbook.yaml` (vervolg-PR) voor de "Open"-knop in de catalogus.
+
+Handmatig aanmaken kan ook nog (dashboard → Add New → Project → zelfde repo, root directory op jouw `src/`, framework preset **Other**), bv. als de workflow faalt.
 
 ## Checklist
 

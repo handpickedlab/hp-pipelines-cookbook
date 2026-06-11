@@ -100,19 +100,20 @@ De PR-template bevat de checklist; CI valideert je manifest en bouwt de catalogu
 
 ## Stap 8 — (Alleen voor deploybare apps) Zet hem live
 
-Heeft je cookbook `runtime: node` of `python-serverless` en wil je hem live? Dan krijgt het een **eigen Vercel-project**:
+Heeft je cookbook `runtime: node` of `python-serverless` en wil je hem live? Zet dan gewoon **`deploy: true`** in je `cookbook.yaml` vóór je merget. Bij de merge naar `main` maakt de provisioning-workflow automatisch een Vercel-project voor je aan (`cookbook-mijn-experiment`, root directory op jouw `src/`) en deployt hem meteen. Je app staat daarna op:
 
-1. Vercel-dashboard → team **handpicked-lab** → **Add New… → Project** → kies deze repo (die is al verbonden; kies "Add another project from the same repo").
-2. **Root Directory**: `cookbooks/mijn-experiment/src`
-3. Stel de **Ignored Build Step** in (Settings → Git) zodat alleen wijzigingen aan jouw cookbook een build triggeren — het exacte commando staat in je `HOSTING.md`.
-4. Deploy, en zet daarna in `cookbook.yaml`: `deploy: true` en `url: https://...`. Kleine vervolg-PR, en de catalogus toont een "Open"-knop bij je cookbook.
+```
+https://cookbook-mijn-experiment.vercel.app
+```
 
-Voor `python-server` (Streamlit e.d.): host op HF Spaces of Railway volgens je `HOSTING.md`, en zet alleen de `url:` in het manifest.
+Zet die URL als `url:` in je manifest (kleine vervolg-PR) en de catalogus toont een "Open"-knop. Env vars (API-keys) zet je daarna in het Vercel-dashboard bij het nieuwe project: Settings → Environment Variables.
+
+Voor `python-server` (Streamlit e.d.): hier doet de workflow niets — host op HF Spaces of Railway volgens je `HOSTING.md`, en zet alleen de `url:` in het manifest.
 
 ## Veelgestelde vragen
 
 **Wat gaat automatisch en wat is handmatig?**
-Mergen naar `main` = je cookbook staat automatisch in de catalogus, geen verdere actie nodig. Wil je dat de app zelf ook live draait, dan is er éénmalig handwerk: het Vercel-project aanmaken (stap 8). Daarna deployt ook jouw app automatisch bij elke push die hem raakt. Het is dus eenmalige setup per cookbook — niet iets terugkerends.
+Mergen naar `main` = je cookbook staat automatisch in de catalogus. Met `deploy: true` wordt bij diezelfde merge ook automatisch een Vercel-project aangemaakt en je app live gezet (stap 8). Daarna deployt elke push die jouw cookbook raakt automatisch. Handmatig blijft alleen: env vars instellen in het dashboard, en de `url:` in je manifest zetten.
 
 **Moet mijn experiment af zijn voordat het erin mag?**
 Nee — dit is een sandbox. Een half experiment met een eerlijke beschrijving is prima; daar is het `tags`-veld en de description voor.
@@ -124,4 +125,4 @@ Ja: `runtime` naar wat het is, `url:` naar waar het draait, code (of een verwijz
 Kan, maar het schema leeft op vier plekken: `index/scripts/validate.mjs`, `templates/cookbook.yaml`, `index/lib/cookbooks.ts` en de docs. Eén PR die ze alle vier bijwerkt.
 
 **Wie maakt het Vercel-project aan?**
-Voorlopig handmatig (stap 8). Automatische provisioning bij merge is gepland — zie `.github/workflows/provision.yml`.
+De CI — automatisch bij merge, zodra `deploy: true` in je manifest staat. Zie stap 8.
