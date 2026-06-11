@@ -91,7 +91,7 @@ for (const m of candidates) {
     continue;
   }
 
-  const deploy = await api("POST", "/v13/deployments", {
+  const deploy = await api("POST", "/v13/deployments?skipAutoDetectionConfirmation=1", {
     name: projectName,
     project: projectName,
     target: "production",
