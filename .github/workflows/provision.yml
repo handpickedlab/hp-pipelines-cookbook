@@ -1,0 +1,24 @@
+# TODO: automatische Vercel-provisioning.
+#
+# Bedoeling: bij merge naar main detecteren welke cookbooks `deploy: true`
+# hebben maar nog geen Vercel-project, en die via de Vercel API aanmaken
+# (POST /v11/projects met rootDirectory = cookbooks/<slug>/src, gekoppeld
+# aan deze repo, plus een ignoredBuildStep per project).
+#
+# Nodig voordat dit aan kan:
+# - VERCEL_TOKEN (team-scoped) als repo secret
+# - VERCEL_TEAM_ID
+# - besluit over naamgeving van projecten (voorstel: cookbook-<slug>)
+#
+# Tot die tijd: handmatig aanmaken volgens templates/hosting/node.md.
+
+name: Provision Vercel projects (disabled)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Provisioning is nog niet geïmplementeerd. Zie de comments in dit bestand."

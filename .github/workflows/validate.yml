@@ -1,0 +1,23 @@
+name: Validate cookbooks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install index deps
+        working-directory: index
+        run: npm ci
+      - name: Validate manifests
+        run: node index/scripts/validate.mjs
+      - name: Build index site
+        working-directory: index
+        run: npm run build

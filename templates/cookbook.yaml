@@ -1,0 +1,15 @@
+# Manifest-template — kopieer naar cookbooks/<slug>/cookbook.yaml en vul in.
+# Validatie: node index/scripts/validate.mjs (draait ook in CI).
+
+slug: my-cookbook            # kebab-case, MOET gelijk zijn aan de mapnaam
+name: My Cookbook            # weergavenaam in de catalogus
+description: >               # 1-2 zinnen, verschijnt op de kaart in de index
+  Korte omschrijving van wat dit experiment doet en waarom.
+type: app                    # app | workflow | notebook
+runtime: node                # node | python-serverless | python-server | notebook | none
+stack: [nextjs]              # vrije lijst, bv. [nextjs], [fastapi], [n8n], [marimo]
+owner: jouw-naam             # wie kun je hierover aanspreken
+deploy: false                # true = krijgt/heeft een eigen Vercel-project
+# url: https://...           # verplicht als runtime: python-server (extern gehost),
+                             # optioneel anders (wordt de "Open"-link in de catalogus)
+tags: []                     # vrije labels voor filteren, bv. [llm, orchestration]

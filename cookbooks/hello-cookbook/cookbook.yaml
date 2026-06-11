@@ -1,0 +1,11 @@
+slug: hello-cookbook
+name: Hello Cookbook
+description: >
+  Minimaal voorbeeld-cookbook: een statische pagina die laat zien hoe de
+  structuur werkt. Kopieer dit niet — start vanaf templates/.
+type: app
+runtime: node
+stack: [static]
+owner: niek
+deploy: false
+tags: [voorbeeld]
