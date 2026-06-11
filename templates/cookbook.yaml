@@ -1,4 +1,5 @@
 # Manifest-template — kopieer naar cookbooks/<slug>/cookbook.yaml en vul in.
+# Veldreferentie (alle waarden + consequenties): MANIFEST.md in de repo-root.
 # Validatie: node index/scripts/validate.mjs (draait ook in CI).
 
 slug: my-cookbook            # kebab-case, MOET gelijk zijn aan de mapnaam

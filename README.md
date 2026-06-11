@@ -21,7 +21,7 @@ templates/             # cookbook.yaml-template + HOSTING.md-recepten per runtim
 
 ## Een cookbook toevoegen
 
-1. Kopieer `templates/cookbook.yaml` naar `cookbooks/<jouw-slug>/cookbook.yaml` en vul hem in. De slug is kebab-case en moet gelijk zijn aan de mapnaam.
+1. Kopieer `templates/cookbook.yaml` naar `cookbooks/<jouw-slug>/cookbook.yaml` en vul hem in. De slug is kebab-case en moet gelijk zijn aan de mapnaam. Alle velden, toegestane waarden en de consequenties van fout invullen: [MANIFEST.md](MANIFEST.md).
 2. Kies het `runtime` dat past en kopieer het bijbehorende recept uit `templates/hosting/` naar `cookbooks/<jouw-slug>/HOSTING.md`. Volg het recept.
 3. Zet je code in `src/`.
 4. Open een PR. CI valideert je manifest; de PR-template loopt de checklist met je door.

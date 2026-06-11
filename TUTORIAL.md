@@ -63,7 +63,7 @@ Vul `cookbook.yaml` in. De twee velden waar je even over na moet denken:
 | Jupyter of marimo notebook | `notebook` |
 | Alleen bestanden (n8n-JSON, prompts, dataset) | `none` |
 
-Let op: `slug` moet **exact** de mapnaam zijn (`mijn-experiment`), anders faalt de validatie.
+Let op: `slug` moet **exact** de mapnaam zijn (`mijn-experiment`), anders faalt de validatie. De volledige veldreferentie — alle toegestane waarden en wat er misgaat bij fout invullen — staat in [MANIFEST.md](MANIFEST.md).
 
 ## Stap 4 — Kopieer het hosting-recept
 
@@ -110,6 +110,9 @@ Heeft je cookbook `runtime: node` of `python-serverless` en wil je hem live? Dan
 Voor `python-server` (Streamlit e.d.): host op HF Spaces of Railway volgens je `HOSTING.md`, en zet alleen de `url:` in het manifest.
 
 ## Veelgestelde vragen
+
+**Wat gaat automatisch en wat is handmatig?**
+Mergen naar `main` = je cookbook staat automatisch in de catalogus, geen verdere actie nodig. Wil je dat de app zelf ook live draait, dan is er éénmalig handwerk: het Vercel-project aanmaken (stap 8). Daarna deployt ook jouw app automatisch bij elke push die hem raakt. Het is dus eenmalige setup per cookbook — niet iets terugkerends.
 
 **Moet mijn experiment af zijn voordat het erin mag?**
 Nee — dit is een sandbox. Een half experiment met een eerlijke beschrijving is prima; daar is het `tags`-veld en de description voor.
