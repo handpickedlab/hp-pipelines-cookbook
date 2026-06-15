@@ -11,7 +11,7 @@ Deze tutorial neemt je in ~15 minuten mee van een verse clone naar een eigen coo
 
 ## Stap 0 — Vereisten
 
-- Node 22+ (voor de index-site en de validator)
+- Node 20+ (voor de index-site en de validator; CI draait op 22)
 - Toegang tot de repo: `github.com/handpickedlab/hp-pipelines-cookbook`
 - Alleen nodig als je gaat deployen: toegang tot het `handpicked-lab` Vercel-team
 
