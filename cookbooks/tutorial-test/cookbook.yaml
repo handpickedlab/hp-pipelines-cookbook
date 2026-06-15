@@ -1,0 +1,11 @@
+slug: tutorial-test
+name: Tutorial Test
+description: >
+  Wegwerp-cookbook om de tutorial en de deploy-keten end-to-end te testen.
+  Mag na de test weer weg.
+type: app
+runtime: node
+stack: [static]
+owner: niek
+deploy: true
+tags: [test]
