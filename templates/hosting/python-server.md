@@ -2,6 +2,8 @@
 
 Dit cookbook heeft een persistent Python-process nodig en draait dus **niet** op Vercel. Het wordt extern gehost; de catalogus linkt naar de URL uit het manifest.
 
+> ⚠️ **Geen gedeelde wachtwoord-gate.** De `SITE_PASSWORD`-gate (`templates/middleware.ts`) is Vercel-middleware en draait alleen vóór op-Vercel-gehoste cookbooks. Omdat dit extern draait, beschermt die gate je app **niet** — `middleware.ts` kopiëren heeft hier geen effect. Wil je je app afschermen, regel dan auth op de host zelf (bv. Streamlit-authenticatie, een HF Spaces private Space, of basic-auth/SSO op Railway/Fly).
+
 ## Lokaal draaien
 
 ```bash
