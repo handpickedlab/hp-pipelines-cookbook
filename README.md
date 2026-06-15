@@ -56,7 +56,23 @@ CI draait dezelfde check op elke PR.
 
 ## Toegang
 
-De catalogus en de gedeployde cookbooks zitten achter basic-auth met een gedeeld teamwachtwoord (vraag het aan Niek; elke username werkt). Technisch: `middleware.ts` per project checkt de env var `SITE_PASSWORD`, die de provisioning-workflow automatisch zet. Cookbooks kopiëren `templates/middleware.ts` naar hun `src/` — zonder dat bestand staat een deploy open op internet. Lokaal (zonder de env var) is alles gewoon open.
+De catalogus en de gedeployde cookbooks zitten achter een gedeelde **wachtwoord-gate**: een eigen HTML-loginpagina (geen kale browser-popup) die de toegang in een cookie onthoudt (HttpOnly/Secure/SameSite, 30 dagen). Vraag het teamwachtwoord aan Niek.
+
+Technisch: `templates/middleware.ts` is Vercel Routing Middleware en checkt de env var `SITE_PASSWORD`, die de provisioning-workflow automatisch op nieuwe projecten zet. Cookbooks kopiëren dit bestand naar hun `src/` — **zonder dat bestand staat een deploy open op internet**. Lokaal (zonder de env var) is alles gewoon open.
+
+### Waar de gate wél en niet werkt
+
+Routing Middleware draait op de Vercel-laag vóór je app, dus de gate beschermt alles wat **op Vercel** gehost wordt — ongeacht de runtime daaronder. Verkeer dat extern draait, raakt de gate nooit.
+
+| Runtime | Gate werkt? | Toelichting |
+|---|---|---|
+| `node` (Next.js, Vite, static) | ✅ Ja | Geverifieerd op de catalogus en op een static cookbook. |
+| `python-serverless` (FastAPI/Flask) | ✅ Ja | Geverifieerd: middleware draait vóór de Python-functions; niet-ingelogd → gate, ingelogd → API. |
+| `python-server` (Streamlit/Gradio/Dash) | ❌ Nee | Extern gehost (HF Spaces/Railway/Fly). Vercel-middleware draait daar niet — regel auth op die host zelf. |
+| `notebook` | ⚠️ Afhankelijk | Statisch op Vercel → ✅. Extern (bv. marimo elders gehost) → ❌, net als `python-server`. |
+| `none` | — | Wordt niet gedeployd; niets om af te schermen. |
+
+Praktisch: een *ingelogde* gebruiker (geldige cookie) gaat gewoon door naar je app, dus de gate botst niet met je eigen routes of POST-endpoints — alleen niet-ingelogde requests worden onderschept. Host je extern (`python-server`), zet daar dan je eigen wachtwoord/SSO; de `SITE_PASSWORD`-gate dekt dat niet.
 
 ## Deploy-provisioning (automatisch)
 
