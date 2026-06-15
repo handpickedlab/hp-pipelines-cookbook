@@ -1,0 +1,11 @@
+slug: py-gate-test
+name: Python Gate Test
+description: >
+  Wegwerp-cookbook om te bevestigen dat de wachtwoord-gate ook vóór een
+  python-serverless (FastAPI) deploy draait. Mag na de test weer weg.
+type: app
+runtime: python-serverless
+stack: [fastapi]
+owner: niek
+deploy: true
+tags: [test]
