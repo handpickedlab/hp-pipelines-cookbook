@@ -17,7 +17,17 @@ export default function Home() {
 
       <section className="grid">
         {cookbooks.map((c) => (
-          <article key={c.slug} className="card">
+          <article key={c.slug} className={`card${c.url ? " card-clickable" : ""}`}>
+            {c.url && (
+              <a
+                className="card-link"
+                href={c.url}
+                target="_blank"
+                rel="noreferrer"
+                aria-hidden={true}
+                tabIndex={-1}
+              />
+            )}
             <div className="card-head">
               <h2>{c.name}</h2>
               <span className={`badge badge-${c.type}`}>{c.type}</span>
