@@ -2,12 +2,12 @@ slug: langgraph
 name: LangGraph
 description: >
   LangGraph-implementatie van de vaste schrijf-casus (Writer → Editor → Reviewer
-  → Orchestrator + HITL) op drie oplopende niveaus (L1/L2/L3). Benchmark om
-  agent-pipeline-frameworks te vergelijken: de input is vast, alleen het framework
-  verandert.
+  → Orchestrator + HITL) op drie niveaus (L1/L2/L3), met een serverless web-UI om
+  de pipeline in de browser te draaien. Benchmark om agent-pipeline-frameworks te
+  vergelijken: de input is vast, alleen het framework verandert.
 type: app
-runtime: none
-stack: [langgraph, langchain, python, openai]
+runtime: python-serverless
+stack: [langgraph, langchain, fastapi, python, openai]
 owner: niek
-deploy: false
+deploy: true
 tags: [llm, agents, orchestration, langgraph, langchain, hitl, benchmark]

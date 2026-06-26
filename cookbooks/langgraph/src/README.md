@@ -37,7 +37,7 @@ cp .env.example .env        # vul OPENAI_API_KEY in
 OpenAI-key haal je bij [platform.openai.com](https://platform.openai.com/api-keys).
 Model is overridebaar via `OPENAI_MODEL` (default `gpt-5.4-mini`).
 
-## Runnen
+## Runnen — CLI
 
 ```bash
 ./start.sh                  # L1 (default)
@@ -55,6 +55,20 @@ python l2_chain.py
 python l3_orchestrator.py --auto-approve
 ```
 
+## Runnen — web-UI (serverless)
+
+Een FastAPI-app (`api/index.py`) draait dezelfde pipeline en toont het resultaat in de
+browser. Lokaal:
+
+```bash
+pip install -r requirements.txt uvicorn
+uvicorn api.index:app --reload      # http://localhost:8000
+```
+
+Op Vercel staat dit als serverless function achter de wachtwoord-gate (zie `HOSTING.md`).
+**L3 draait in de web-UI in auto-approve** — de echte HITL-pauze werkt alleen via de CLI,
+want serverless is stateless en houdt de `interrupt()`-checkpoint niet vast tussen requests.
+
 ## Structuur
 
 - `inputs.py` — vaste briefing + output preferences (de casus).
@@ -64,6 +78,8 @@ python l3_orchestrator.py --auto-approve
 - `l1_writer.py` — één Writer-node.
 - `l2_chain.py` — lineaire chain; print JSON UI-payload na afloop.
 - `l3_orchestrator.py` — revisie-loop (max 3 iteraties), checkpointing, HITL via `interrupt()`.
+- `api/index.py` + `api/_ui.py` — de serverless web-UI (FastAPI + HTML), draait dezelfde pipeline.
+- `middleware.ts` / `vercel.json` — wachtwoord-gate en routing voor de Vercel-deploy.
 
 ## L3 — HITL & checkpointing
 
