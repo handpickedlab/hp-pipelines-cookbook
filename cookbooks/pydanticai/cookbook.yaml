@@ -1,0 +1,13 @@
+slug: pydanticai
+name: PydanticAI
+description: >
+  PydanticAI-implementatie van de vaste schrijf-casus (Writer → Editor → Reviewer
+  → Orchestrator + HITL) op drie niveaus (L1/L2/L3), met een serverless web-UI. Zelfde
+  benchmark als de andere framework-cookbooks: de input is vast, alleen het framework
+  verandert.
+type: app
+runtime: python-serverless
+stack: [pydantic-ai, fastapi, python, openai]
+owner: niek
+deploy: true
+tags: [llm, agents, orchestration, pydantic-ai, hitl, benchmark]

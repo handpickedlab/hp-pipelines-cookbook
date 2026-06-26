@@ -1,0 +1,4 @@
+pydantic-ai-slim[openai]>=0.0.20
+fastapi==0.115.*
+python-dotenv>=1.0.0
+# Optioneel: zet ook `logfire` aan voor deep-tracing (zie HOSTING.md).
