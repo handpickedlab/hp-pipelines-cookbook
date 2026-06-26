@@ -41,15 +41,15 @@ from common import MAX_ITERATIONS, initial_state, ui_payload
 from inputs import BRIEFING, OUTPUT_PREFERENCES
 
 
-def run_l1() -> dict:
+def run_l1(briefing: str, preferences: dict) -> dict:
     graph = l1_writer.build_graph()
-    result = graph.invoke(initial_state(BRIEFING, OUTPUT_PREFERENCES))
+    result = graph.invoke(initial_state(briefing, preferences))
     return ui_payload(result, level="L1")
 
 
-def run_l2() -> dict:
+def run_l2(briefing: str, preferences: dict) -> dict:
     graph = l2_chain.build_graph()
-    result = graph.invoke(initial_state(BRIEFING, OUTPUT_PREFERENCES))
+    result = graph.invoke(initial_state(briefing, preferences))
     review = result.get("review")
     return ui_payload(
         result,
@@ -61,14 +61,14 @@ def run_l2() -> dict:
     )
 
 
-def run_l3() -> dict:
+def run_l3(briefing: str, preferences: dict) -> dict:
     """Volledige orchestrator-loop, elke HITL-pauze automatisch goedgekeurd."""
     from langgraph.checkpoint.memory import InMemorySaver
     from langgraph.types import Command
 
     graph = l3_orchestrator.build_graph(checkpointer=InMemorySaver())
     config = {"configurable": {"thread_id": "web-l3"}}
-    result = graph.invoke(initial_state(BRIEFING, OUTPUT_PREFERENCES), config)
+    result = graph.invoke(initial_state(briefing, preferences), config)
 
     while True:
         snapshot = graph.get_state(config)
@@ -94,6 +94,26 @@ def run_l3() -> dict:
 
 RUNNERS = {"l1": run_l1, "l2": run_l2, "l3": run_l3}
 
+
+def resolve_inputs(req: "RunRequest") -> tuple:
+    """Voeg user-input samen met de standaard-casus; ontbrekende velden vallen terug."""
+    briefing = (req.briefing or "").strip() or BRIEFING
+    prefs = {**OUTPUT_PREFERENCES, **(req.preferences or {})}
+    try:
+        prefs["length_words"] = int(prefs["length_words"])
+    except (TypeError, ValueError, KeyError):
+        prefs["length_words"] = OUTPUT_PREFERENCES["length_words"]
+    for key in ("must_include", "must_avoid", "structure"):
+        if not isinstance(prefs.get(key), list):
+            prefs[key] = OUTPUT_PREFERENCES[key]
+    return briefing, prefs
+
+
+def langsmith_enabled() -> bool:
+    flag = os.environ.get("LANGSMITH_TRACING") or os.environ.get("LANGCHAIN_TRACING_V2")
+    has_key = os.environ.get("LANGSMITH_API_KEY") or os.environ.get("LANGCHAIN_API_KEY")
+    return str(flag).lower() == "true" and bool(has_key)
+
 app = FastAPI(title="LangGraph writer-benchmark")
 
 
@@ -108,11 +128,20 @@ def health() -> dict:
         "status": "ok",
         "model": os.environ.get("OPENAI_MODEL", "gpt-5.4-mini"),
         "has_key": bool(os.environ.get("OPENAI_API_KEY")),
+        "langsmith": langsmith_enabled(),
     }
+
+
+@app.get("/api/defaults")
+def defaults() -> dict:
+    """De vaste casus — gebruikt om het formulier voor te vullen."""
+    return {"briefing": BRIEFING, "preferences": OUTPUT_PREFERENCES}
 
 
 class RunRequest(BaseModel):
     level: str = "l2"
+    briefing: str | None = None
+    preferences: dict | None = None
 
 
 @app.post("/run")
@@ -130,7 +159,8 @@ def run(req: RunRequest):
             },
             status_code=503,
         )
+    briefing, preferences = resolve_inputs(req)
     try:
-        return RUNNERS[level]()
+        return RUNNERS[level](briefing, preferences)
     except Exception as exc:  # noqa: BLE001 — toon de fout netjes in de UI
         return JSONResponse({"error": f"{type(exc).__name__}: {exc}"}, status_code=500)
