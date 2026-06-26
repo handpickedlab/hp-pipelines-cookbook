@@ -68,5 +68,18 @@ is meteen een benchmark-finding: orkestratie + HITL wire je hier handmatig.
 
 ## Findings
 
-Vul na een run de cel in voor PydanticAI (verdict + setup-tijd, highs, lows, effort), zodat
-de vergelijking met `langgraph` compleet wordt.
+Gemeten op **`gpt-5.4-mini`**. Mechaniek van L1/L2/L3 geverifieerd; L3 end-to-end gedraaid.
+
+**L1/L2** ✅ — Agents met `output_type` geven structured output zonder gedoe; `result.usage()`
+levert tokens voor de observability. Lineaire L2 is gewoon drie sequentiële `run_sync`-calls.
+
+**L3** ⚠️ — De revisie-loop + guard werken (plain-Python orkestratie), maar in de testrun
+**schoot het model de lengte over** (692 → 812 → 802 woorden, target 540-660) en haalde nooit
+een pass → gestopt op `max_iterations_reached`. Contrast met `langgraph`, dat met hetzelfde
+model/casus wél convergeerde (670 → 601, pass op iter 2). Eén stochastische run, dus
+voorzichtig — maar het laat zien dat deze casus gevoelig is voor framework/prompt-gedrag op
+de lengte-constraint.
+
+**Lows 👎** — PydanticAI heeft **geen ingebouwde checkpointing/interrupt** voor de L3-loop;
+HITL + resume wire je handmatig (vs. LangGraph's `interrupt()`/checkpointing en LlamaIndex'
+`InputRequiredEvent`/`WorkflowCheckpointer`). Effort: laag voor L1/L2, medium voor L3.

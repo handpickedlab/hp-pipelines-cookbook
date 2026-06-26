@@ -10,4 +10,5 @@ runtime: python-serverless
 stack: [pydantic-ai, fastapi, python, openai]
 owner: niek
 deploy: true
+url: https://cookbook-pydanticai.vercel.app
 tags: [llm, agents, orchestration, pydantic-ai, hitl, benchmark]
