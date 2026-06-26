@@ -10,4 +10,5 @@ runtime: python-serverless
 stack: [llama-index, workflows, fastapi, python, openai]
 owner: niek
 deploy: true
+url: https://cookbook-llamaindex-workflows.vercel.app
 tags: [llm, agents, orchestration, llamaindex, workflows, hitl, benchmark]
