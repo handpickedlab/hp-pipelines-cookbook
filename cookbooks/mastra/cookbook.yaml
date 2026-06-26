@@ -1,0 +1,11 @@
+slug: mastra
+name: Mastra
+description: >
+  End-to-end feature pipeline op Mastra: idee → spec → design → feature branch →
+  code → test → commit → push → PR. Mens reviewt en merge't op GitHub.
+type: app
+runtime: node
+stack: [mastra]
+owner: jascha
+deploy: false
+tags: [llm, agents, orchestration, mastra, coding, sandbox, git, pr]
