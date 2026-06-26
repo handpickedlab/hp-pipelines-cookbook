@@ -10,4 +10,5 @@ runtime: python-serverless
 stack: [langgraph, langchain, fastapi, python, openai]
 owner: niek
 deploy: true
+url: https://cookbook-langgraph.vercel.app
 tags: [llm, agents, orchestration, langgraph, langchain, hitl, benchmark]

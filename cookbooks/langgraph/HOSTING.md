@@ -50,6 +50,21 @@ CLI (`./start.sh l3`). L3 kan tot 9 LLM-calls doen; met een reasoning-model (def
 | `OPENAI_API_KEY` | **Ja** | Na de eerste deploy zelf zetten: Vercel-project → Settings → Environment Variables → redeploy. Zonder key geeft `/run` een nette 503. |
 | `OPENAI_MODEL` | Nee | Model-override, default `gpt-5.4-mini`. |
 | `SITE_PASSWORD` | — | Wordt automatisch door de provisioning-workflow gezet (de gate). |
+| `LANGSMITH_TRACING` | Nee | `true` om elke LLM-call naar LangSmith te tracen (waterfall, prompts, tokens, latency). |
+| `LANGSMITH_API_KEY` | Nee | Vereist als tracing aanstaat (key via [smith.langchain.com](https://smith.langchain.com)). |
+| `LANGSMITH_PROJECT` | Nee | Projectnaam in LangSmith, bv. `langgraph-writer-benchmark`. |
+
+## Eigen input & observability
+
+- **Eigen input**: de web-UI vult de **vaste casus** voor als default, maar je kunt briefing,
+  lengte, toon en `must_include`/`must_avoid`/`structure` vrij overschrijven. De API merget
+  je input met de defaults; lege velden vallen terug. Voor een eerlijke framework-vergelijking
+  laat je de standaard-casus staan.
+- **Observability (in-app)**: elke run toont totalen (LLM-calls, latency, tokens) plus een
+  per-call tabel (node, iteratie, ms, tokens). Werkt zonder extra account.
+- **Observability (LangSmith)**: zet de `LANGSMITH_*` env-vars hierboven → LangChain traced
+  automatisch elke call met volledige prompt/response-waterfall in het LangSmith-dashboard.
+  De UI toont in de metabar of tracing aanstaat.
 
 ## Live zetten (automatisch)
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import operator
 import os
+import time
 from typing import Annotated
 
 from langchain_openai import ChatOpenAI
@@ -47,6 +48,11 @@ class TraceRecord(TypedDict, total=False):
     iteration: int
     input: dict
     output: dict
+    duration_ms: int
+    tokens_in: int
+    tokens_out: int
+    tokens_total: int
+    model: str
 
 
 class BasePipelineState(TypedDict):
@@ -135,9 +141,35 @@ def preferences_block(preferences: dict) -> str:
     return json.dumps(preferences, ensure_ascii=False, indent=2)
 
 
+def invoke_structured(llm, schema, messages) -> tuple:
+    """Roep het model aan met structured output en meet duur + token-gebruik.
+
+    Geeft (parsed_object, meta) terug. `meta` bevat duration_ms en token-counts
+    (None als het model die niet meegeeft). Gebruikt include_raw zodat we naast het
+    geparste object ook de ruwe AIMessage met usage_metadata in handen krijgen.
+    """
+    structured = llm.with_structured_output(schema, include_raw=True)
+    start = time.perf_counter()
+    result = structured.invoke(messages)
+    duration_ms = round((time.perf_counter() - start) * 1000)
+
+    parsed = result["parsed"] if isinstance(result, dict) else result
+    raw = result.get("raw") if isinstance(result, dict) else None
+    usage = getattr(raw, "usage_metadata", None) or {}
+    response_meta = getattr(raw, "response_metadata", None) or {}
+
+    meta = {
+        "duration_ms": duration_ms,
+        "tokens_in": usage.get("input_tokens"),
+        "tokens_out": usage.get("output_tokens"),
+        "tokens_total": usage.get("total_tokens"),
+        "model": response_meta.get("model_name"),
+    }
+    return parsed, meta
+
+
 def writer_node(state: BasePipelineState) -> dict:
     llm = build_llm()
-    structured_llm = llm.with_structured_output(Article)
 
     revision = state.get("revision_notes", "").strip()
     revision_block = f"\n\nREVISIE-OPDRACHT:\n{revision}" if revision else ""
@@ -148,8 +180,8 @@ def writer_node(state: BasePipelineState) -> dict:
         f"{revision_block}"
     )
 
-    article: Article = structured_llm.invoke(
-        [("system", WRITER_SYSTEM), ("user", user_prompt)]
+    article, meta = invoke_structured(
+        llm, Article, [("system", WRITER_SYSTEM), ("user", user_prompt)]
     )
     iteration = state.get("iteration", 1)
 
@@ -162,6 +194,7 @@ def writer_node(state: BasePipelineState) -> dict:
                 "iteration": iteration,
                 "input": {"system": WRITER_SYSTEM, "user": user_prompt},
                 "output": article.model_dump(),
+                **meta,
             }
         ],
     }
@@ -169,7 +202,6 @@ def writer_node(state: BasePipelineState) -> dict:
 
 def editor_node(state: BasePipelineState) -> dict:
     llm = build_llm()
-    structured_llm = llm.with_structured_output(Article)
     article = state["article"]
     iteration = state.get("iteration", 1)
 
@@ -179,8 +211,8 @@ def editor_node(state: BasePipelineState) -> dict:
         f"HUIDIGE DRAFT:\nTitel: {article.title}\n\n{article.body_markdown}"
     )
 
-    edited: Article = structured_llm.invoke(
-        [("system", EDITOR_SYSTEM), ("user", user_prompt)]
+    edited, meta = invoke_structured(
+        llm, Article, [("system", EDITOR_SYSTEM), ("user", user_prompt)]
     )
 
     return {
@@ -192,6 +224,7 @@ def editor_node(state: BasePipelineState) -> dict:
                 "iteration": iteration,
                 "input": {"system": EDITOR_SYSTEM, "user": user_prompt},
                 "output": edited.model_dump(),
+                **meta,
             }
         ],
     }
@@ -199,7 +232,6 @@ def editor_node(state: BasePipelineState) -> dict:
 
 def reviewer_node(state: BasePipelineState) -> dict:
     llm = build_llm()
-    structured_llm = llm.with_structured_output(ReviewResult)
     article = state["article"]
     iteration = state.get("iteration", 1)
     wc = word_count(article.body_markdown)
@@ -211,8 +243,8 @@ def reviewer_node(state: BasePipelineState) -> dict:
         f"Woorden (geteld): {wc}"
     )
 
-    review: ReviewResult = structured_llm.invoke(
-        [("system", REVIEWER_SYSTEM), ("user", user_prompt)]
+    review, meta = invoke_structured(
+        llm, ReviewResult, [("system", REVIEWER_SYSTEM), ("user", user_prompt)]
     )
     target = state["preferences"]["length_words"]
     low, high = round(target * 0.9), round(target * 1.1)
@@ -241,6 +273,7 @@ def reviewer_node(state: BasePipelineState) -> dict:
                 "iteration": iteration,
                 "input": {"system": REVIEWER_SYSTEM, "user": user_prompt},
                 "output": review.model_dump(by_alias=True),
+                **meta,
             }
         ],
     }
@@ -282,7 +315,33 @@ def ui_payload(result: dict, *, level: str, extra: dict | None = None) -> dict:
         "iteration_count": result.get("iteration", 1),
         "must_avoid_violations": must_avoid_violations(body, result["preferences"]),
         "trace_nodes": [t["node"] for t in result.get("trace", [])],
+        "trace": [
+            {
+                "node": t.get("node"),
+                "iteration": t.get("iteration"),
+                "duration_ms": t.get("duration_ms"),
+                "tokens_in": t.get("tokens_in"),
+                "tokens_out": t.get("tokens_out"),
+                "tokens_total": t.get("tokens_total"),
+            }
+            for t in result.get("trace", [])
+        ],
+        "totals": _trace_totals(result.get("trace", [])),
     }
     if extra:
         payload.update(extra)
     return payload
+
+
+def _trace_totals(trace: list) -> dict:
+    def _sum(key: str):
+        vals = [t.get(key) for t in trace if isinstance(t.get(key), (int, float))]
+        return sum(vals) if vals else None
+
+    return {
+        "llm_calls": len(trace),
+        "duration_ms": _sum("duration_ms"),
+        "tokens_in": _sum("tokens_in"),
+        "tokens_out": _sum("tokens_out"),
+        "tokens_total": _sum("tokens_total"),
+    }

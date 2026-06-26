@@ -69,6 +69,12 @@ Op Vercel staat dit als serverless function achter de wachtwoord-gate (zie `HOST
 **L3 draait in de web-UI in auto-approve** — de echte HITL-pauze werkt alleen via de CLI,
 want serverless is stateless en houdt de `interrupt()`-checkpoint niet vast tussen requests.
 
+De UI heeft een **input-paneel** (briefing + preferences, voorgevuld met de vaste casus —
+overschrijfbaar) en een **observability-kaart**: per run de LLM-calls, latency en
+token-counts (totaal + per node). Zet de `LANGSMITH_*` env-vars voor volledige
+prompt/response-traces in LangSmith. Endpoints: `GET /api/defaults` (casus voor het formulier),
+`POST /run` (`{level, briefing, preferences}`), `GET /api/health` (model + tracing-status).
+
 ## Structuur
 
 - `inputs.py` — vaste briefing + output preferences (de casus).
